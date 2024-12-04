@@ -1,0 +1,113 @@
+
+function createTableFromJSON(data) {
+    var html = "<table><tr><th>Category</th><th>Value</th></tr>";
+    for (const x in data) {
+        var category = x;
+        var value = data[x];
+        html += "<tr><td>" + category + "</td><td>" + value + "</td></tr>";
+    }
+    html += "</table>";
+    return html;
+
+}
+
+function logout() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            $("#ajaxContent").html("Successful Logout");
+            //window.location.href = "login.html"; // Redirect to login page
+        } else {
+            $("#ajaxContent").html("Error: " + xhr.responseText);
+        }
+    };
+    xhr.open('GET', 'Logout', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send();
+}
+
+
+function getUser() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $("#ajaxContent").html("Successful Login!\n"+createTableFromJSON(JSON.parse(xhr.responseText)));
+        } else if (xhr.status !== 200) {
+             $("#ajaxContent").html("User not exists or incorrect password");
+        }
+    };
+    var data = $('#loginForm').serialize();
+    xhr.open('GET', 'GetUser?'+data);
+    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.send();
+}
+
+
+
+$("#edit-user-form").on("submit", function (event) {
+     event.preventDefault(); // Prevent form submission
+
+        const formData = {};
+        $(this).serializeArray().forEach((field) => {
+            formData[field.name] = field.value;
+        });
+
+        $.ajax({
+            url: '/EditUser', // Adjust to your servlet path
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                $('#edit-message').text('User details updated successfully.').css('color', 'green');
+            },
+            error: function (xhr) {
+                $('#edit-message').text('Error updating user: ' + xhr.responseText).css('color', 'red');
+            }
+        });
+    });
+ 
+
+
+function createUser(){
+    var xhr = new XMLHttpRequest();
+    xhr.onload =  XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $("#ajaxContent").html(createTableFromJSON(JSON.parse(xhr.responseText)));
+          //  $("#ajaxContent").html("Successful Login");
+        } else if (xhr.status !== 200) {
+             $("#ajaxContent").html("User not exists or incorrect password");
+        }
+    };
+}
+
+
+function initDB() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+              $("#ajaxContent").html("Successful Initialization");
+        } else if (xhr.status !== 200) {
+             $("#ajaxContent").html("Error Occured while initDB(): "+ xhr.status);
+        }
+    };
+
+    xhr.open('GET', 'InitDB');
+    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.send();
+}
+
+function deleteDB() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+              $("#ajaxContent").html("Successful Deletion");
+        } else if (xhr.status !== 200) {
+             $("#ajaxContent").html("Error Occured while deleteDB(): "+ xhr.status );
+        }
+    };
+
+    xhr.open('GET', 'DeleteDB');
+    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.send();
+}

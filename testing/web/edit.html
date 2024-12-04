@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/edit.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="profile-section">
+        <h2>User Profile</h2>
+        <div id="ajax-message"></div>
+        <form id="edit-user-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" readonly><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname" required><br>
+
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname" required><br>
+
+            <label for="birthdate">Birthdate:</label>
+            <input type="date" id="birthdate" name="birthdate" required><br>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select><br>
+
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required><br>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required><br>
+
+            <label for="municipality">Municipality:</label>
+            <input type="text" id="municipality" name="municipality" required><br>
+
+            <label for="prefecture">Prefecture:</label>
+            <input type="text" id="prefecture" name="prefecture" required><br>
+
+            <label for="job">Job:</label>
+            <input type="text" id="job" name="job"><br>
+
+            <label for="telephone">Telephone:</label>
+            <input type="text" id="telephone" name="telephone" readonly><br>
+
+            <label for="afm">AFM:</label>
+            <input type="text" id="afm" name="afm" readonly><br>
+
+            <button type="button" id="save-changes">Save Changes</button>
+        </form>
+        <a href="index.html"><button>go back</button></a>
+    </div>
+    <script src="js/edit-user.js"></script>
+</body>
+</html>
