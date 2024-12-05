@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author pswmi64
  */
-@WebServlet(name = "RegisterEvent", urlPatterns = {"/RegisterEvent"})
-public class RegisterEvent extends HttpServlet {
+@WebServlet(name = "Booking", urlPatterns = {"/Booking"})
+public class Booking extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +43,10 @@ public class RegisterEvent extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RegisterEvent</title>");
+            out.println("<title>Servlet Booking</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RegisterEvent at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Booking at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -76,13 +78,10 @@ public class RegisterEvent extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         // Get user input from the request
-        String eventName = request.getParameter("eventName");
-        String eventDate = request.getParameter("eventDate");
-        String eventTime = request.getParameter("eventTime");
-        String eventType = request.getParameter("eventType");
-        int capacity = Integer.parseInt(request.getParameter("capacity"));
-        double ticketPrice = 10.00; // Default ticket price
+        int customerId = Integer.parseInt(request.getParameter("customerId"));
+        int eventId = Integer.parseInt(request.getParameter("eventId"));
+        int numberOfTickets = Integer.parseInt(request.getParameter("numberOfTickets"));
+        java.sql.Date bookingDate = new java.sql.Date(System.currentTimeMillis()); // Current date
 
         Connection conn = null;
 
@@ -90,46 +89,49 @@ public class RegisterEvent extends HttpServlet {
             conn = DB_Connection.getConnection();
             conn.setAutoCommit(false); // Disable auto-commit for transactional behavior
 
-            // Insert event into the Events table
-            String sqlEvent = "INSERT INTO Events (EventName, EventDate, EventTime, EventType, Capacity) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pstmtEvent = conn.prepareStatement(sqlEvent, PreparedStatement.RETURN_GENERATED_KEYS);
-            pstmtEvent.setString(1, eventName);
-            pstmtEvent.setString(2, eventDate);
-            pstmtEvent.setString(3, eventTime);
-            pstmtEvent.setString(4, eventType);
-            pstmtEvent.setInt(5, capacity);
-            pstmtEvent.executeUpdate();
+            // Step 1: Find a TicketID with enough availability
+            String sqlFindTicket = "SELECT TicketID, Availability FROM Tickets WHERE EventID = ? AND Availability >= ? LIMIT 1";
+            PreparedStatement pstmtFind = conn.prepareStatement(sqlFindTicket);
+            pstmtFind.setInt(1, eventId);
+            pstmtFind.setInt(2, numberOfTickets);
+            ResultSet rs = pstmtFind.executeQuery();
 
-            // Retrieve the generated EventID from Events
-            ResultSet rsEvent = pstmtEvent.getGeneratedKeys();
-            int eventId = 0;
-            if (rsEvent.next()) {
-                eventId = rsEvent.getInt(1); // Get the generated EventID
-            } else {
-                throw new SQLException("Failed to retrieve EventID.");
+            if (!rs.next()) {
+                throw new SQLException("No available tickets found for the specified EventID and requested quantity.");
             }
-            // Insert tickets for the event using the retrieved EventID
-            String sqlTickets = "INSERT INTO Tickets (EventID, TicketType, Price, Availability) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmtTickets = conn.prepareStatement(sqlTickets);
-            pstmtTickets.setInt(1, eventId); // Use the EventID retrieved
-            pstmtTickets.setString(2, "Simple"); // Default ticket type
-            pstmtTickets.setDouble(3, ticketPrice); // Default price
-            pstmtTickets.setInt(4, capacity); // Initial availability matches capacity
-            pstmtTickets.executeUpdate();
 
-            conn.commit(); // Commit the transaction
+            int ticketId = rs.getInt("TicketID");
+            int currentAvailability = rs.getInt("Availability");
 
-            // Send success response
+            // Step 2: Deduct the number of tickets from the ticket's availability
+            String sqlUpdateAvailability = "UPDATE Tickets SET Availability = Availability - ? WHERE TicketID = ?";
+            PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdateAvailability);
+            pstmtUpdate.setInt(1, numberOfTickets);
+            pstmtUpdate.setInt(2, ticketId);
+            pstmtUpdate.executeUpdate();
+
+            // Step 3: Insert the booking into the Bookings table
+            String sqlInsertBooking = "INSERT INTO Bookings (CustomerID, EventID, TicketID, BookingDate, NumberOfTickets) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement pstmtBooking = conn.prepareStatement(sqlInsertBooking);
+            pstmtBooking.setInt(1, customerId);
+            pstmtBooking.setInt(2, eventId);
+            pstmtBooking.setInt(3, ticketId);
+            pstmtBooking.setDate(4, bookingDate);
+            pstmtBooking.setInt(5, numberOfTickets);
+            pstmtBooking.executeUpdate();
+
+            conn.commit(); // Commit transaction
+
+            // Success response
             response.setContentType("text/html");
-            response.getWriter().println("<h3>Event and Tickets Registered Successfully!</h3>");
+            response.getWriter().println("<h3>Tickets booked successfully!</h3>");
         } catch (Exception e) {
-            // Handle errors
-             e.printStackTrace();
+            e.printStackTrace();
             if (conn != null) {
                 try {
-                    conn.rollback(); // Rollback the transaction if any error occurs
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
+                    conn.rollback(); // Rollback transaction on failure
+                } catch (SQLException ex) {
+                    Logger.getLogger(Booking.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             response.setContentType("text/html");
@@ -138,8 +140,8 @@ public class RegisterEvent extends HttpServlet {
             if (conn != null) {
                 try {
                     conn.close(); // Close the connection
-                } catch (SQLException closeEx) {
-                    closeEx.printStackTrace();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Booking.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

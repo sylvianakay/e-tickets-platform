@@ -21,7 +21,7 @@
                 <button  class="button" onclick="deleteDB()">Delete Database</button><!-- comment -->
                 <a href="register.html" target="_blank"><button  class="button">Register User</button></a>
                 <a href="events.html" target="_blank"><button  class="button">Register event</button></a>
-                
+                <a href="book.html" target="_blank"><button  class="button">Book</button></a>
                 <br><br>
                 See the account of a user <br><br>
                 <form id="loginForm" name="loginForm" action="GetUser" method="get">
@@ -42,6 +42,12 @@
                 <div id="ajaxContent">
                     
                 </div>
+                <h1>Search Available Tickets</h1>
+    <form action="AvailableTickets" method="get">
+        <label for="eventId">Event ID:</label>
+        <input type="number" id="eventId" name="eventId" required><br>
+        <input type="submit" value="Search">
+    </form>
 
             </div>
 
