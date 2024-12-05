@@ -20,17 +20,14 @@
         <servlet-name>GetUser</servlet-name>
         <url-pattern>/GetUser</url-pattern>
     </servlet-mapping>
-    
     <servlet>
-    <servlet-name>RegisterUser</servlet-name>
-    <servlet-class>servlets.RegisterUser</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>RegisterUser</servlet-name>
-    <url-pattern>/RegisterUser</url-pattern>
-</servlet-mapping>
-
-
+        <servlet-name>RegisterUser</servlet-name>
+        <servlet-class>servlets.RegisterUser</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterUser</servlet-name>
+        <url-pattern>/RegisterUser</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitDB</servlet-name>
         <url-pattern>/InitDB</url-pattern>

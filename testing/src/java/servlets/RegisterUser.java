@@ -100,19 +100,21 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
          String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String creditCardInfo = request.getParameter("creditCardInfo");
+        String Password = request.getParameter("password");
 
         try (Connection conn = DB_Connection.getConnection()) {
-            String sql = "INSERT INTO Customers (FullName, Email, CreditCardInfo) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Customers (FullName, Email, CreditCardInfo, Password) VALUES (?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, fullName);
             pstmt.setString(2, email);
             pstmt.setString(3, creditCardInfo);
+            pstmt.setString(4, Password);
             pstmt.executeUpdate();
 
-            response.getWriter().println("<h3>Customer added successfully!</h3>");
+            response.getWriter().println("Customer added successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<h3>Error: " + e.getMessage() + "</h3>");
+            response.getWriter().println("Error: " + e.getMessage());
         }
     }
 

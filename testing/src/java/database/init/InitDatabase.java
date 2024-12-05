@@ -60,7 +60,8 @@ public class InitDatabase {
                 + "CustomerID INT AUTO_INCREMENT PRIMARY KEY,"
                 + "FullName VARCHAR(255) NOT NULL,"
                 + "Email VARCHAR(255) UNIQUE NOT NULL,"
-                + "CreditCardInfo VARCHAR(16) NOT NULL)");
+                + "CreditCardInfo VARCHAR(16) NOT NULL,"
+                + "Password VARCHAR(255) NOT NULL)");
 
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Tickets ("
                 + "TicketID INT AUTO_INCREMENT PRIMARY KEY,"

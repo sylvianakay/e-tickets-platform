@@ -9,7 +9,7 @@
 
     </head>
     <body>
-        <h2>E-199</h2> 
+        <h2>e-tickets</h2> 
 
 
         <div class="row">
@@ -20,10 +20,11 @@
                 <button  class="button" onclick="initDB()">Initialize Database</button><!-- comment -->
                 <button  class="button" onclick="deleteDB()">Delete Database</button><!-- comment -->
                 <a href="register.html" target="_blank"><button  class="button">Register User</button></a>
+                <a href="events.html" target="_blank"><button  class="button">Register event</button></a>
                 
                 <br><br>
                 See the account of a user <br><br>
-                <form id="loginForm" name="loginForm" onsubmit='getUser();return false;'>
+                <form id="loginForm" name="loginForm" action="GetUser" method="get">
                     <label for="username">username:</label><br>
                     <input type="text"  id="username" name="username" required><br>
                     <label for="password">password:</label><br>
@@ -33,7 +34,6 @@
                 </form>
                 <button id="logout-button" class="button" onclick="logout()">Logout</button>
                 
-                <a href="edit.html"><button id="edit-button" class="button" >Edit Details</button></a>
             </div>
             <div class="column column2Width" id="output" style="background-color:#fffff0;">
                 <h2>Output</h2>
