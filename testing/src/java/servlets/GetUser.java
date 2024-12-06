@@ -10,6 +10,7 @@ import database.DB_Connection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -55,24 +56,40 @@ public class GetUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try (Connection conn = DB_Connection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM Customers")) {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
 
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
-            out.println("<h1>Customers List</h1>");
-            out.println("<table border='1'><tr><th>ID</th><th>Full Name</th><th>Email</th></tr>");
+        response.setContentType("text/html");
+        try (PrintWriter out = response.getWriter();
+             Connection conn = DB_Connection.getConnection()) {
 
-            while (rs.next()) {
-                out.println("<tr><td>" + rs.getInt("CustomerID") + "</td>");
-                out.println("<td>" + rs.getString("FullName") + "</td>");
-                out.println("<td>" + rs.getString("Email") + "</td></tr>");
+            // Check if the user exists with the provided email and password
+            String sql = "SELECT * FROM Customers WHERE Email = ? AND Password = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, email);
+            pstmt.setString(2, password);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                // Successful login
+                int customerId = rs.getInt("CustomerID");
+                String fullName = rs.getString("FullName");
+
+                // Create a session for the user
+                HttpSession session = request.getSession();
+                session.setAttribute("CustomerID", customerId);
+                session.setAttribute("FullName", fullName);
+
+                response.sendRedirect("user.html");
+            } else {
+                // Invalid login
+                out.println("<h3>Invalid email or password. Please try again.</h3>");
             }
-            out.println("</table>");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             response.getWriter().println("<h3>Error: " + e.getMessage() + "</h3>");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GetUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

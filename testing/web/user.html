@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/cssExamples.css">
+    <script src="js/ajax.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        // Fetch and display user bookings
+        function fetchBookings() {
+    $.ajax({
+        url: "GetBookings",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+            if (data.error) {
+                $("#bookings").html(`<p>Error: ${data.error}</p>`);
+                return;
+            }
+
+            let table = `<table border="1">
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Event Name</th>
+                                <th>Ticket Type</th>
+                                <th>Number of Tickets</th>
+                                <th>Price (per Ticket)</th>
+                                <th>Total Price</th>
+                                <th>Booking Date</th>
+                            </tr>`;
+
+            data.forEach(function (booking) {
+                table += `<tr>
+                            <td>${booking.BookingID}</td>
+                            <td>${booking.EventName}</td>
+                            <td>${booking.TicketType}</td>
+                            <td>${booking.NumberOfTickets}</td>
+                            <td>$${booking.Price.toFixed(2)}</td>
+                            <td>$${booking.TotalPrice.toFixed(2)}</td>
+                            <td>${booking.BookingDate}</td>
+                          </tr>`;
+            });
+
+            table += "</table>";
+            $("#bookings").html(table);
+        },
+        error: function (xhr, status, error) {
+            $("#bookings").html(`<p>Error: ${xhr.responseText || error}</p>`);
+        },
+    });
+}
+
+// Call fetchBookings on page load
+$(document).ready(fetchBookings);
+
+    </script>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to Your Dashboard</h1>
+    <p>You have successfully logged in!</p>
+    <div class="column column1Width" id="output" style="background-color: azure;">
+    <h2>Search Available Tickets</h2>
+    <form action="AvailableTickets" method="get">
+        <label for="eventId">Event ID:</label>
+        <input type="number" id="eventId" name="eventId" required><br>
+        <input type="submit" value="Search">
+    </form></div>
+    <div class="column column2Width" id="output" style="background-color: lightblue;">
+    <h2>Book Tickets</h2>
+    <form action="Booking" method="post">
+        
+        <label for="eventId">Event ID:</label>
+        <input type="number" id="eventId" name="eventId" required><br>
+
+        <label for="numberOfTickets">Number of Tickets:</label>
+        <input type="number" id="numberOfTickets" name="numberOfTickets" required><br>
+
+        <input type="submit" value="Book Tickets">
+    </form></div>
+    <h3>Bookings awaiting:</h3>
+    <div id="bookings"></div>
+</body>
+</html>

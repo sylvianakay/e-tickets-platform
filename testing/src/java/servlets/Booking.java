@@ -18,6 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -78,14 +79,23 @@ public class Booking extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int customerId = Integer.parseInt(request.getParameter("customerId"));
+        
+        HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("CustomerID") == null) {
+            response.setContentType("text/html");
+            response.getWriter().println("<h3>Error: User not logged in.</h3>");
+            return;
+        }
+        int customerId = (int) session.getAttribute("CustomerID"); 
         int eventId = Integer.parseInt(request.getParameter("eventId"));
         int numberOfTickets = Integer.parseInt(request.getParameter("numberOfTickets"));
         java.sql.Date bookingDate = new java.sql.Date(System.currentTimeMillis()); // Current date
 
         Connection conn = null;
 
+        
         try {
+            
             conn = DB_Connection.getConnection();
             conn.setAutoCommit(false); // Disable auto-commit for transactional behavior
 
@@ -99,6 +109,8 @@ public class Booking extends HttpServlet {
             if (!rs.next()) {
                 throw new SQLException("No available tickets found for the specified EventID and requested quantity.");
             }
+//            double ticketPrice = rs.getDouble("Price");
+//            double totalPrice = ticketPrice * numberOfTickets;
 
             int ticketId = rs.getInt("TicketID");
             int currentAvailability = rs.getInt("Availability");
