@@ -39,6 +39,7 @@
                             <td>$${booking.Price.toFixed(2)}</td>
                             <td>$${booking.TotalPrice.toFixed(2)}</td>
                             <td>${booking.BookingDate}</td>
+                            <td><button onclick="cancelBooking(${booking.BookingID}, ${booking.NumberOfTickets}, ${booking.TicketID})">Cancel</button></td>
                           </tr>`;
             });
 
@@ -47,9 +48,30 @@
         },
         error: function (xhr, status, error) {
             $("#bookings").html(`<p>Error: ${xhr.responseText || error}</p>`);
-        },
-    });
-}
+        }
+    });}
+    function cancelBooking(bookingId, numberOfTickets, ticketId) {
+        if (!confirm("Are you sure you want to cancel this booking?")) {
+            return;
+        }
+
+        $.ajax({
+            url: "CancelBooking",
+            method: "POST",
+            data: {
+                bookingId: bookingId,
+                numberOfTickets: numberOfTickets,
+                ticketId: ticketId,
+            },
+            success: function (data) {
+                $("#cancelMessage").text(data.message);
+                fetchBookings(); // Refresh the bookings table
+            },
+            error: function (xhr, status, error) {
+                $("#cancelMessage").text(`Error: ${xhr.responseText || error}`);
+            }
+        });
+    }
 
 // Call fetchBookings on page load
 $(document).ready(fetchBookings);
@@ -78,13 +100,14 @@ $(document).ready(fetchBookings);
         <input type="number" id="numberOfTickets" name="numberOfTickets" required><br>
 
         <input type="submit" value="Book Tickets">
-        <button type="button" onclick="cancelRegistration()">Cancel Registration</button>
-    <p id="cancelMessage" style="color: red; font-weight: bold;"></p>
         
+    
+    
         
     </form></div>
     <h3>Bookings awaiting:</h3>
     <div id="bookings"></div>
+    <div id="cancelMessage" style="color: red; font-weight: bold;"></div>
      
 </body>
 </html>

@@ -49,28 +49,35 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-    private void handleAvailableAndReserved(Connection conn, PrintWriter out) throws SQLException {
-        String sql = "SELECT e.EventName, " +
-                     "SUM(t.Availability) AS Available, " +
-                     "SUM(t.InitialAvailability - t.Availability) AS Reserved " +
-                     "FROM Events e " +
-                     "JOIN Tickets t ON e.EventID = t.EventID " +
-                     "GROUP BY e.EventName";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            StringBuilder json = new StringBuilder("[");
-            while (rs.next()) {
-                if (json.length() > 1) json.append(",");
-                json.append("{")
-                    .append("\"EventName\":\"").append(rs.getString("EventName")).append("\",")
-                    .append("\"Available\":").append(rs.getInt("Available")).append(",")
-                    .append("\"Reserved\":").append(rs.getInt("Reserved"))
-                    .append("}");
-            }
-            json.append("]");
-            out.println(json.toString());
+   private void handleAvailableAndReserved(Connection conn, PrintWriter out) {
+    String sql = "SELECT e.EventName, " +
+                 "SUM(t.Availability) AS Available, " +
+                 "SUM(t.InitialAvailability - t.Availability) AS Reserved " +
+                 "FROM Events e " +
+                 "JOIN Tickets t ON e.EventID = t.EventID " +
+                 "GROUP BY e.EventName";
+    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+        StringBuilder json = new StringBuilder("[");
+        while (rs.next()) {
+            if (json.length() > 1) json.append(",");
+            json.append("{")
+                .append("\"EventName\":\"").append(rs.getString("EventName")).append("\",")
+                .append("\"Available\":").append(rs.getInt("Available")).append(",")
+                .append("\"Reserved\":").append(rs.getInt("Reserved"))
+                .append("}");
         }
+        json.append("]");
+        out.println(json.toString());
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log the error
+        out.println("{\"error\":\"SQL Error: " + e.getMessage() + "\"}");
+    } catch (Exception e) {
+        e.printStackTrace(); // Log other exceptions
+        out.println("{\"error\":\"Unexpected Error: " + e.getMessage() + "\"}");
     }
+}
+
 
     private void handleRevenuePerEvent(Connection conn, PrintWriter out) throws SQLException {
         String sql = "SELECT e.EventName, SUM(b.NumberOfTickets * t.Price) AS TotalRevenue " +

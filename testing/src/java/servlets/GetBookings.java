@@ -75,11 +75,12 @@ public class GetBookings extends HttpServlet {
         try (Connection conn = DB_Connection.getConnection()) {
             // Fetch bookings for the logged-in user
             String sql = "SELECT b.BookingID, e.EventName, t.TicketType, b.NumberOfTickets, b.BookingDate, " +
-                         "t.Price, (t.Price * b.NumberOfTickets) AS TotalPrice " +
-                         "FROM Bookings b " +
-                         "JOIN Events e ON b.EventID = e.EventID " +
-                         "JOIN Tickets t ON b.TicketID = t.TicketID " +
-                         "WHERE b.CustomerID = ?";
+             "t.Price, (t.Price * b.NumberOfTickets) AS TotalPrice, t.TicketID " +
+             "FROM Bookings b " +
+             "JOIN Events e ON b.EventID = e.EventID " +
+             "JOIN Tickets t ON b.TicketID = t.TicketID " +
+             "WHERE b.CustomerID = ?";
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, customerId);
             ResultSet rs = pstmt.executeQuery();
@@ -89,14 +90,16 @@ public class GetBookings extends HttpServlet {
             while (rs.next()) {
                 if (json.length() > 1) json.append(",");
                 json.append("{")
-                    .append("\"BookingID\":").append(rs.getInt("BookingID")).append(",")
-                    .append("\"EventName\":\"").append(rs.getString("EventName")).append("\",")
-                    .append("\"TicketType\":\"").append(rs.getString("TicketType")).append("\",")
-                    .append("\"NumberOfTickets\":").append(rs.getInt("NumberOfTickets")).append(",")
-                    .append("\"BookingDate\":\"").append(rs.getDate("BookingDate")).append("\",")
-                    .append("\"Price\":").append(rs.getDouble("Price")).append(",")
-                    .append("\"TotalPrice\":").append(rs.getDouble("TotalPrice"))
-                    .append("}");
+    .append("\"BookingID\":").append(rs.getInt("BookingID")).append(",")
+    .append("\"EventName\":\"").append(rs.getString("EventName")).append("\",")
+    .append("\"TicketType\":\"").append(rs.getString("TicketType")).append("\",")
+    .append("\"NumberOfTickets\":").append(rs.getInt("NumberOfTickets")).append(",")
+    .append("\"BookingDate\":\"").append(rs.getDate("BookingDate")).append("\",")
+    .append("\"Price\":").append(rs.getDouble("Price")).append(",")
+    .append("\"TotalPrice\":").append(rs.getDouble("TotalPrice")).append(",")
+    .append("\"TicketID\":").append(rs.getInt("TicketID"))
+    .append("}");
+
             }
             json.append("]");
             response.getWriter().println(json.toString());

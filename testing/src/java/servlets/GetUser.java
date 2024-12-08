@@ -83,7 +83,7 @@ public class GetUser extends HttpServlet {
                 if ("admin".equalsIgnoreCase(email) && "1234567890".equals(password)) {
                     response.sendRedirect("admin.html");
                 } else {
-                    response.sendRedirect("dashboard.html");
+                    response.sendRedirect("user.html");
                 }
             } else {
                 // Invalid login
