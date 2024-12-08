@@ -83,6 +83,10 @@ public class InitDatabase {
                 + "FOREIGN KEY (TicketID) REFERENCES Tickets(TicketID))");
 
             System.out.println("Tables created successfully.");
+            
+            String insertAdmin = "INSERT INTO Customers (FullName, Email, CreditCardInfo, Password) " +
+                     "VALUES ('admin', 'admin', '0000000000000000', '1234567890')";
+            stmt.executeUpdate(insertAdmin);
         }
     
     }

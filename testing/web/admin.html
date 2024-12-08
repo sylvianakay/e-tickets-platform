@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        function fetchAdminData(action, params = {}) {
+            $.ajax({
+                url: "AdminServlet",
+                method: "GET",
+                data: { action, ...params },
+                dataType: "json",
+                success: function (data) {
+                    // Display data based on the action
+                    if (action === "availableAndReserved") {
+                        displayAvailableAndReserved(data);
+                    } else if (action === "revenuePerEvent") {
+                        displayRevenuePerEvent(data);
+                    } else if (action === "popularEvent") {
+                        displayPopularEvent(data);
+                    } else if (action === "highestRevenueEvent") {
+                        displayHighestRevenueEvent(data);
+                    } else if (action === "bookingsByPeriod") {
+                        displayBookingsByPeriod(data);
+                    } else if (action === "ticketTypeRevenue") {
+                        displayTicketTypeRevenue(data);
+                    }
+                },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        function displayAvailableAndReserved(data) {
+            let table = `<table border="1"><tr><th>Event Name</th><th>Available Tickets</th><th>Reserved Tickets</th></tr>`;
+            data.forEach(event => {
+                table += `<tr><td>${event.EventName}</td><td>${event.Available}</td><td>${event.Reserved}</td></tr>`;
+            });
+            table += "</table>";
+            $("#availableAndReserved").html(table);
+        }
+
+        function displayRevenuePerEvent(data) {
+            let table = `<table border="1"><tr><th>Event Name</th><th>Total Revenue</th></tr>`;
+            data.forEach(event => {
+                table += `<tr><td>${event.EventName}</td><td>${event.TotalRevenue}</td></tr>`;
+            });
+            table += "</table>";
+            $("#revenuePerEvent").html(table);
+        }
+
+        function displayPopularEvent(data) {
+            $("#popularEvent").html(`<p>The most popular event is: ${data.EventName} with ${data.Bookings} bookings.</p>`);
+        }
+
+        function displayHighestRevenueEvent(data) {
+            $("#highestRevenueEvent").html(`<p>The event with the highest revenue is: ${data.EventName} with $${data.TotalRevenue} revenue.</p>`);
+        }
+
+        function displayBookingsByPeriod(data) {
+            let table = `<table border="1"><tr><th>Booking ID</th><th>Event Name</th><th>Number of Tickets</th><th>Booking Date</th></tr>`;
+            data.forEach(booking => {
+                table += `<tr><td>${booking.BookingID}</td><td>${booking.EventName}</td><td>${booking.NumberOfTickets}</td><td>${booking.BookingDate}</td></tr>`;
+            });
+            table += "</table>";
+            $("#bookingsByPeriod").html(table);
+        }
+
+        function displayTicketTypeRevenue(data) {
+            let table = `<table border="1"><tr><th>Event Name</th><th>Revenue</th></tr>`;
+            data.forEach(event => {
+                table += `<tr><td>${event.EventName}</td><td>${event.Revenue}</td></tr>`;
+            });
+            table += "</table>";
+            $("#ticketTypeRevenue").html(table);
+        }
+
+        $(document).ready(function () {
+            fetchAdminData("availableAndReserved");
+            fetchAdminData("revenuePerEvent");
+            fetchAdminData("popularEvent");
+        });
+    </script>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <div>
+        <h2>Available and Reserved Tickets</h2>
+        <div id="availableAndReserved">Loading...</div>
+    </div>
+    <div>
+        <h2>Revenue Per Event</h2>
+        <div id="revenuePerEvent">Loading...</div>
+    </div>
+    <div>
+        <h2>Most Popular Event</h2>
+        <div id="popularEvent">Loading...</div>
+    </div>
+    <div>
+        <h2>Event with Highest Revenue in a Period</h2>
+        <input type="date" id="startDate" />
+        <input type="date" id="endDate" />
+        <button onclick="fetchAdminData('highestRevenueEvent', { startDate: $('#startDate').val(), endDate: $('#endDate').val() })">Fetch</button>
+        <div id="highestRevenueEvent"></div>
+    </div>
+    <div>
+        <h2>Bookings by Period</h2>
+        <input type="date" id="bookingStartDate" />
+        <input type="date" id="bookingEndDate" />
+        <button onclick="fetchAdminData('bookingsByPeriod', { startDate: $('#bookingStartDate').val(), endDate: $('#bookingEndDate').val() })">Fetch</button>
+        <div id="bookingsByPeriod"></div>
+    </div>
+    <div>
+        <h2>Revenue by Ticket Type</h2>
+        <select id="ticketType">
+            <option value="VIP">VIP</option>
+            <option value="General">General</option>
+        </select>
+        <button onclick="fetchAdminData('ticketTypeRevenue', { ticketType: $('#ticketType').val() })">Fetch</button>
+        <div id="ticketTypeRevenue"></div>
+    </div>
+</body>
+</html>

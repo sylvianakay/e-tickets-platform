@@ -80,7 +80,11 @@ public class GetUser extends HttpServlet {
                 session.setAttribute("CustomerID", customerId);
                 session.setAttribute("FullName", fullName);
 
-                response.sendRedirect("user.html");
+                if ("admin".equalsIgnoreCase(email) && "1234567890".equals(password)) {
+                    response.sendRedirect("admin.html");
+                } else {
+                    response.sendRedirect("dashboard.html");
+                }
             } else {
                 // Invalid login
                 out.println("<h3>Invalid email or password. Please try again.</h3>");
