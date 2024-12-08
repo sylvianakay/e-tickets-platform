@@ -16,12 +16,14 @@
         <input type="email" id="email" name="email" required><br>
 
         <label for="creditCardInfo">Credit Card Info:</label>
-        <input type="text" id="creditCardInfo" name="creditCardInfo" maxlength="16" required><br>
+        <input type="text" id="creditCardInfo" name="creditCardInfo" maxlength="16" 
+               pattern="\d{16}" 
+               title="Credit card number must be exactly 16 digits." 
+               required><br>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
 
-        
         <input type="submit" value="Register Customer">
     </form>
 </body>

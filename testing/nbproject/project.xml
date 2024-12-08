@@ -16,7 +16,6 @@
                 </library>
                 <library dirs="200">
                     <file>${file.reference.Spark_Core_2.9.3.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>

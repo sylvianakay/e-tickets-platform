@@ -78,8 +78,13 @@ $(document).ready(fetchBookings);
         <input type="number" id="numberOfTickets" name="numberOfTickets" required><br>
 
         <input type="submit" value="Book Tickets">
+        <button type="button" onclick="cancelRegistration()">Cancel Registration</button>
+    <p id="cancelMessage" style="color: red; font-weight: bold;"></p>
+        
+        
     </form></div>
     <h3>Bookings awaiting:</h3>
     <div id="bookings"></div>
+     
 </body>
 </html>
