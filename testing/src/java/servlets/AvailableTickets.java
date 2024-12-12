@@ -82,11 +82,23 @@ public class AvailableTickets extends HttpServlet {
             pstmt.setInt(1, eventId);
             ResultSet rs = pstmt.executeQuery();
 
-            // Δημιουργούμε HTML απάντηση
+            // Create a prettier HTML response
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
+            out.println("<html><head><title>Available Tickets</title>");
+            out.println("<style>");
+            out.println("body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; }");
+            out.println("h3 { color: #4CAF50; text-align: center; }");
+            out.println("table { width: 80%; margin: 20px auto; border-collapse: collapse; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }");
+            out.println("table th, table td { padding: 10px; text-align: left; border: 1px solid #ddd; }");
+            out.println("table th { background-color: #4CAF50; color: white; }");
+            out.println("table tr:nth-child(even) { background-color: #f9f9f9; }");
+            out.println("table tr:hover { background-color: #f1f1f1; }");
+            out.println("</style></head><body>");
+
             out.println("<h3>Available Tickets for Event ID: " + eventId + "</h3>");
-            out.println("<table border='1'><tr><th>Ticket ID</th><th>Type</th><th>Availability</th></tr>");
+            out.println("<table>");
+            out.println("<tr><th>Ticket ID</th><th>Type</th><th>Availability</th></tr>");
 
             while (rs.next()) {
                 out.println("<tr>");
@@ -97,6 +109,7 @@ public class AvailableTickets extends HttpServlet {
             }
 
             out.println("</table>");
+            out.println("</body></html>");
         } catch (Exception e) {
             e.printStackTrace();
             response.setContentType("text/html");

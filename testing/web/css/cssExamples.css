@@ -1,82 +1,136 @@
+/* General Reset 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-table, tr{
-    border: 2px solid black;
-    
-}
-.row {
-width:100%;
- 
-}
-
-img {
-width:90%;
+ Body Styling 
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  padding: 20px;
+  line-height: 1.6;
 }
 
-/* Create two equal columns that floats next to each other */
-.column {
-  display:inline-block;
-  float: left;
-  padding: 10px;
- /* 	text-align: center;*/
-  border: 5px solid black;
-  border-radius: 8px;
-  margin-right:2%;
-  margin-left:2%;
-  min-height:400px;
+ Table Styling 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  text-align: left;
 }
 
-.column1Width {
-width: 30%;
+table th, table td {
+  padding: 12px;
+  border: 1px solid #ddd;
 }
 
-.column3Width {
-width: 99%;
+table th {
+  background-color: #4CAF50;
+  color: white;
 }
 
-.column2Width {
-width: 60%;
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-.subColumn {
-float: left;
-  width: 45%;
-  padding: 10px;
-  border: 5px solid black;
-  border-radius: 8px;
-  margin-right:10px;
-  margin-left:10px;
+table tr:hover {
+  background-color: #f1f1f1;
 }
 
-/* Clear floats after the columns */
-.row:after {
-  content: "";
+ Heading Styling 
+h2 {
+  text-align: center;
+  color: #4CAF50;
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
-
-
-h2{
-	text-align: center;
-}
-
+ Button Styling 
 .button {
-  background-color: #ffffff; 
-  border: 5px solid black;
-  border-radius: 8px;
-  color: black;
-  padding: 10px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 15px;
-  margin: 4px 2px;
+  margin: 10px 0;
   cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
+.button:hover {
+  background-color: #45a049;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 
+ Form Styling 
+form {
+  margin: 20px 0;
+}
 
+form input[type="text"],
+form input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+form input[type="submit"] {
+  width: auto;
+  padding: 10px 20px;
+}
+
+ Section Styling 
+section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+ Output Section 
 #output {
-
+  padding: 20px;
+  background-color: #fffff0;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+#output h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+#logout-message, #login-message, #ajaxContent {
+  margin-top: 10px;
+}
+
+ Links Styling 
+a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}*/

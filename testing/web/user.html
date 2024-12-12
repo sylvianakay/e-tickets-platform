@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,107 +8,196 @@
     <script src="js/ajax.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-        // Fetch and display user bookings
         function fetchBookings() {
-    $.ajax({
-        url: "GetBookings",
-        method: "GET",
-        dataType: "json",
-        success: function (data) {
-            if (data.error) {
-                $("#bookings").html(`<p>Error: ${data.error}</p>`);
+            $.ajax({
+                url: "GetBookings",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (data.error) {
+                        $("#bookings").html(`<p>Error: ${data.error}</p>`);
+                        return;
+                    }
+
+                    let table = `<table border="1">
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Event Name</th>
+                                        <th>Ticket Type</th>
+                                        <th>Number of Tickets</th>
+                                        <th>Price (per Ticket)</th>
+                                        <th>Total Price</th>
+                                        <th>Booking Date</th>
+                                        <th>Action</th>
+                                    </tr>`;
+
+                    data.forEach(function (booking) {
+                        table += `<tr>
+                                    <td>${booking.BookingID}</td>
+                                    <td>${booking.EventName}</td>
+                                    <td>${booking.TicketType}</td>
+                                    <td>${booking.NumberOfTickets}</td>
+                                    <td>$${booking.Price.toFixed(2)}</td>
+                                    <td>$${booking.TotalPrice.toFixed(2)}</td>
+                                    <td>${booking.BookingDate}</td>
+                                    <td><button onclick="cancelBooking(${booking.BookingID}, ${booking.NumberOfTickets}, ${booking.TicketID})">Cancel</button></td>
+                                  </tr>`;
+                    });
+
+                    table += "</table>";
+                    $("#bookings").html(table);
+                },
+                error: function (xhr, status, error) {
+                    $("#bookings").html(`<p>Error: ${xhr.responseText || error}</p>`);
+                }
+            });
+        }
+
+        function cancelBooking(bookingId, numberOfTickets, ticketId) {
+            if (!confirm("Are you sure you want to cancel this booking?")) {
                 return;
             }
 
-            let table = `<table border="1">
-                            <tr>
-                                <th>Booking ID</th>
-                                <th>Event Name</th>
-                                <th>Ticket Type</th>
-                                <th>Number of Tickets</th>
-                                <th>Price (per Ticket)</th>
-                                <th>Total Price</th>
-                                <th>Booking Date</th>
-                            </tr>`;
-
-            data.forEach(function (booking) {
-                table += `<tr>
-                            <td>${booking.BookingID}</td>
-                            <td>${booking.EventName}</td>
-                            <td>${booking.TicketType}</td>
-                            <td>${booking.NumberOfTickets}</td>
-                            <td>$${booking.Price.toFixed(2)}</td>
-                            <td>$${booking.TotalPrice.toFixed(2)}</td>
-                            <td>${booking.BookingDate}</td>
-                            <td><button onclick="cancelBooking(${booking.BookingID}, ${booking.NumberOfTickets}, ${booking.TicketID})">Cancel</button></td>
-                          </tr>`;
+            $.ajax({
+                url: "CancelBooking",
+                method: "POST",
+                data: {
+                    bookingId: bookingId,
+                    numberOfTickets: numberOfTickets,
+                    ticketId: ticketId,
+                },
+                success: function (data) {
+                    $("#cancelMessage").text(data.message);
+                    fetchBookings();
+                },
+                error: function (xhr, status, error) {
+                    $("#cancelMessage").text(`Error: ${xhr.responseText || error}`);
+                }
             });
-
-            table += "</table>";
-            $("#bookings").html(table);
-        },
-        error: function (xhr, status, error) {
-            $("#bookings").html(`<p>Error: ${xhr.responseText || error}</p>`);
-        }
-    });}
-    function cancelBooking(bookingId, numberOfTickets, ticketId) {
-        if (!confirm("Are you sure you want to cancel this booking?")) {
-            return;
         }
 
-        $.ajax({
-            url: "CancelBooking",
-            method: "POST",
-            data: {
-                bookingId: bookingId,
-                numberOfTickets: numberOfTickets,
-                ticketId: ticketId,
-            },
-            success: function (data) {
-                $("#cancelMessage").text(data.message);
-                fetchBookings(); // Refresh the bookings table
-            },
-            error: function (xhr, status, error) {
-                $("#cancelMessage").text(`Error: ${xhr.responseText || error}`);
-            }
-        });
-    }
-
-// Call fetchBookings on page load
-$(document).ready(fetchBookings);
-
+        $(document).ready(fetchBookings);
     </script>
     <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 300px;
+            margin: 10px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        #cancelMessage {
+            text-align: center;
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Welcome to Your Dashboard</h1>
-    <p>You have successfully logged in!</p>
-    <div class="column column1Width" id="output" style="background-color: azure;">
-    <h2>Search Available Tickets</h2>
-    <form action="AvailableTickets" method="get">
-        <label for="eventId">Event ID:</label>
-        <input type="number" id="eventId" name="eventId" required><br>
-        <input type="submit" value="Search">
-    </form></div>
-    <div class="column column2Width" id="output" style="background-color: lightblue;">
-    <h2>Book Tickets</h2>
-    <form action="Booking" method="post">
-        
-        <label for="eventId">Event ID:</label>
-        <input type="number" id="eventId" name="eventId" required><br>
+    <p style="text-align: center;">You have successfully logged in!</p>
 
-        <label for="numberOfTickets">Number of Tickets:</label>
-        <input type="number" id="numberOfTickets" name="numberOfTickets" required><br>
+    <div class="dashboard-container">
+        <div class="column">
+            <h2>Search Available Tickets</h2>
+            <form action="AvailableTickets" method="get">
+                <label for="eventId">Event ID:</label>
+                <input type="number" id="eventId" name="eventId" min="1" required>
+                <input type="submit" value="Search">
+            </form>
+        </div>
 
-        <input type="submit" value="Book Tickets">
-        
-    
-    
-        
-    </form></div>
-    <h3>Bookings awaiting:</h3>
+        <div class="column">
+            <h2>Book Tickets</h2>
+            <form action="Booking" method="post">
+                <label for="eventId">Event ID:</label>
+                <input type="number" id="eventId" name="eventId" min="1" required>
+
+                <label for="numberOfTickets">Number of Tickets:</label>
+                <input type="number" id="numberOfTickets" name="numberOfTickets" min="1" required>
+
+                <input type="submit" value="Book Tickets">
+            </form>
+        </div>
+    </div>
+
+    <h3>Bookings Awaiting:</h3>
     <div id="bookings"></div>
-    <div id="cancelMessage" style="color: red; font-weight: bold;"></div>
-     
+    <div id="cancelMessage"></div>
 </body>
+
 </html>

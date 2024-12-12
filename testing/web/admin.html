@@ -35,7 +35,7 @@
         }
 
         function displayAvailableAndReserved(data) {
-            let table = `<table border="1"><tr><th>Event Name</th><th>Available Tickets</th><th>Reserved Tickets</th></tr>`;
+            let table = `<table><tr><th>Event Name</th><th>Available Tickets</th><th>Reserved Tickets</th></tr>`;
             data.forEach(event => {
                 table += `<tr><td>${event.EventName}</td><td>${event.Available}</td><td>${event.Reserved}</td></tr>`;
             });
@@ -44,7 +44,7 @@
         }
 
         function displayRevenuePerEvent(data) {
-            let table = `<table border="1"><tr><th>Event Name</th><th>Total Revenue</th></tr>`;
+            let table = `<table><tr><th>Event Name</th><th>Total Revenue</th></tr>`;
             data.forEach(event => {
                 table += `<tr><td>${event.EventName}</td><td>${event.TotalRevenue}</td></tr>`;
             });
@@ -61,7 +61,7 @@
         }
 
         function displayBookingsByPeriod(data) {
-            let table = `<table border="1"><tr><th>Booking ID</th><th>Event Name</th><th>Number of Tickets</th><th>Booking Date</th></tr>`;
+            let table = `<table><tr><th>Booking ID</th><th>Event Name</th><th>Number of Tickets</th><th>Booking Date</th></tr>`;
             data.forEach(booking => {
                 table += `<tr><td>${booking.BookingID}</td><td>${booking.EventName}</td><td>${booking.NumberOfTickets}</td><td>${booking.BookingDate}</td></tr>`;
             });
@@ -70,7 +70,7 @@
         }
 
         function displayTicketTypeRevenue(data) {
-            let table = `<table border="1"><tr><th>Event Name</th><th>Revenue</th></tr>`;
+            let table = `<table><tr><th>Event Name</th><th>Revenue</th></tr>`;
             data.forEach(event => {
                 table += `<tr><td>${event.EventName}</td><td>${event.Revenue}</td></tr>`;
             });
@@ -84,36 +84,172 @@
             fetchAdminData("popularEvent");
         });
     </script>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+
+        /* Section styling */
+        section {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e1e1e1;
+        }
+
+        /* Buttons */
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        input[type="date"], select {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Center content */
+        #availableAndReserved, #revenuePerEvent, #popularEvent, #highestRevenueEvent, #bookingsByPeriod, #ticketTypeRevenue {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            table, input[type="date"], select {
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Admin Dashboard</h1>
-    <div>
+    
+    <!-- Available and Reserved Tickets -->
+    <section>
         <h2>Available and Reserved Tickets</h2>
         <div id="availableAndReserved">Loading...</div>
-    </div>
-    <div>
+    </section>
+
+    <!-- Revenue Per Event -->
+    <section>
         <h2>Revenue Per Event</h2>
         <div id="revenuePerEvent">Loading...</div>
-    </div>
-    <div>
+    </section>
+
+    <!-- Most Popular Event -->
+    <section>
         <h2>Most Popular Event</h2>
         <div id="popularEvent">Loading...</div>
-    </div>
-    <div>
+    </section>
+
+    <!-- Highest Revenue Event by Period -->
+    <section>
         <h2>Event with Highest Revenue in a Period</h2>
         <input type="date" id="startDate" />
         <input type="date" id="endDate" />
         <button onclick="fetchAdminData('highestRevenueEvent', { startDate: $('#startDate').val(), endDate: $('#endDate').val() })">Fetch</button>
         <div id="highestRevenueEvent"></div>
-    </div>
-    <div>
+    </section>
+
+    <!-- Bookings by Period -->
+    <section>
         <h2>Bookings by Period</h2>
         <input type="date" id="bookingStartDate" />
         <input type="date" id="bookingEndDate" />
         <button onclick="fetchAdminData('bookingsByPeriod', { startDate: $('#bookingStartDate').val(), endDate: $('#bookingEndDate').val() })">Fetch</button>
         <div id="bookingsByPeriod"></div>
-    </div>
-    <div>
+    </section>
+
+    <!-- Revenue by Ticket Type -->
+    <section>
         <h2>Revenue by Ticket Type</h2>
         <select id="ticketType">
             <option value="VIP">VIP</option>
@@ -121,6 +257,7 @@
         </select>
         <button onclick="fetchAdminData('ticketTypeRevenue', { ticketType: $('#ticketType').val() })">Fetch</button>
         <div id="ticketTypeRevenue"></div>
-    </div>
+    </section>
+
 </body>
 </html>
