@@ -117,51 +117,56 @@ function deleteDB() {
 }
 
 function cancelEvent() {
-        event.preventDefault(); /*to stop the page from refreshing*/
-        const eventId = $("#eventId").val();
+        const selectedEventName = $(".eventDropdown").val(); // Assuming only one dropdown triggers this action
 
-        if (!confirm("Are you sure you want to cancel this event? This will refund all customers.")) {
-            return;
-        }
+    if (!selectedEventName) {
+        alert("Please select an event to cancel.");
+        return;
+    }
 
-        $.ajax({
-            url: "CancelEvent",
-            method: "POST",
-            data: { eventId: eventId },
-            success: function (data) {
-                if (data.error) {
-                    $("#cancelEventMessage").html(`<p>Error: ${data.error}</p>`);
-                } else {
-                    $("#cancelEventMessage").html(`<p>${data.message}</p>`);
-                    fetchAdminData("availableAndReserved"); // Refresh event data
-                }
-            },
-            error: function (xhr, status, error) {
-                $("#cancelEventMessage").html(`<p>Error: ${xhr.responseText || error}</p>`);
+    if (!confirm("Are you sure you want to cancel this event? This will refund all customers.")) {
+        return;
+    }
+
+    $.ajax({
+        url: "CancelEvent",
+        method: "POST",
+        data: { eventName: selectedEventName },
+        success: function (data) {
+            if (data.error) {
+                $("#cancelEventMessage").text(data.error);
+            } else {
+                $("#cancelEventMessage").text(data.message);
+                populateEventDropdown(); // Refresh all dropdowns
             }
-        });
+        },
+        error: function (xhr) {
+            $("#cancelEventMessage").text(`Error: ${xhr.responseText || "Unknown error"}`);
+        }
+    });
     }
     
 function populateEventDropdown(selectorId) {
     $.ajax({
-        url: "Events",
+        url: "Events", // Replace with your servlet URL that provides event names and IDs
         method: "GET",
         dataType: "json",
         success: function (data) {
+            console.log("Dropdown Data:", data);
             $(".eventDropdown").each(function () {
-                    $(this).empty(); // Clear existing options
-                    $(this).append('<option value="" disabled selected>Select an Event</option>');
-                    
-                    data.forEach(event => {
-                        $(this).append(`<option value="${event.EventID}">${event.EventName}</option>`);
-                    });
+                $(this).empty(); // Clear existing options
+                $(this).append('<option value="" disabled selected>Select an Event</option>');
+                
+                data.forEach(event => {
+                    $(this).append(`<option value="${event.EventName}">${event.EventName}</option>`);
                 });
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching events:", error);
-                $(".eventDropdown").each(function () {
-                    $(this).html('<option value="" disabled>Error loading events</option>');
-                });
+            $(".eventDropdown").each(function () {
+                $(this).html('<option value="" disabled>Error loading events</option>');
+            });
         }
     });
 }

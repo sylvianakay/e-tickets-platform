@@ -83,6 +83,7 @@
             fetchAdminData("availableAndReserved");
             fetchAdminData("revenuePerEvent");
             fetchAdminData("popularEvent");
+            populateEventDropdown();
         });
     </script>
     <style>
@@ -265,9 +266,11 @@
     <section>
     <h2>Cancel Event</h2>
     <form id="cancelEventForm">
-        <label for="eventId">Event ID:</label>
-         <select class="eventDropdown" name="eventId" required></select><br>
-        <button onclick="cancelEvent()">Cancel Event</button>
+        <label for="eventName">Event Name:</label>
+        <select class="eventDropdown" name="eventName" required>
+            <option value="" disabled selected>Select an event</option>
+        </select><br>
+        <button type="button" onclick="cancelEvent()">Cancel Event</button>
     </form>
     <div id="cancelEventMessage" style="color: red; font-weight: bold;"></div>
 </section>

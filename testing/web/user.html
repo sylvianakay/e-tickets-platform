@@ -84,20 +84,20 @@
                 event.preventDefault(); // Prevent default form submission
                 
                 const formData = $(this).serialize(); // Serialize form data
-alert(response); // Show success message
-                        location.reload(); // Refresh the page
+
                 // Send form data via AJAX
-//                $.ajax({
-//                    url: "Booking",
-//                    method: "POST",
-//                    data: formData,
-//                    success: function (response) {
-//                        
-//                    },
-//                    error: function (xhr, status, error) {
-//                        alert(`Error: ${xhr.responseText || error}`); // Show error message
-//                    }
-//                });
+                $.ajax({
+                    url: "Booking",
+                    method: "POST",
+                    data: formData,
+                    success: function (response) {
+                        alert(response); // Show success message
+                        location.reload(); // Refresh the page
+                    },
+                    error: function (xhr, status, error) {
+                        alert(`Error: ${xhr.responseText || error}`); // Show error message
+                    }
+                });
             });
         });
     </script>
