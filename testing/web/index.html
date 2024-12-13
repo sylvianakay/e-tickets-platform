@@ -146,22 +146,15 @@
 
         <!-- Action Section -->
         <section id="actions">
-            <h3>Actions</h3>
-            <button class="button" onclick="initDB()">Initialize Database</button>
-            <button class="button" onclick="deleteDB()">Delete Database</button>
+            <h3>Create an account here:</h3>
+            
             <a href="register.html" target="_blank"><button class="button">Register User</button></a>
-            <a href="events.html" target="_blank"><button class="button">Register Event</button></a>
+            
         </section>
-        <!-- Output Section -->
-        <section id="output">
-            <h3>Output</h3>
-            <div id="logout-message"></div>
-            <div id="login-message"></div>
-            <div id="ajaxContent"></div>
-        </section>
+        
         <!-- Login Section -->
         <section id="login">
-            <h3>Login</h3>
+            <h3>Welcome Back!</h3>
             <p>Please login to book tickets:</p>
             <form id="loginForm" name="loginForm" action="GetUser" method="get">
                 <label for="email">Email</label>
@@ -172,7 +165,12 @@
             </form>
             <button id="logout-button" class="button" onclick="logout()">Logout</button>
         </section>
-
+<section id="output">
+            <h3>Output</h3>
+            <div id="logout-message"></div>
+            <div id="login-message"></div>
+            <div id="ajaxContent"></div>
+        </section>
         
     </body>
 </html>

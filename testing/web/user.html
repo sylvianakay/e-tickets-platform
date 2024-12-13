@@ -76,7 +76,30 @@
             });
         }
 
-        $(document).ready(fetchBookings);
+        $(document).ready(function () {
+            fetchBookings();
+
+            // Intercept form submission for booking tickets
+            $("form[action='Booking']").on("submit", function (event) {
+                event.preventDefault(); // Prevent default form submission
+                
+                const formData = $(this).serialize(); // Serialize form data
+alert(response); // Show success message
+                        location.reload(); // Refresh the page
+                // Send form data via AJAX
+//                $.ajax({
+//                    url: "Booking",
+//                    method: "POST",
+//                    data: formData,
+//                    success: function (response) {
+//                        
+//                    },
+//                    error: function (xhr, status, error) {
+//                        alert(`Error: ${xhr.responseText || error}`); // Show error message
+//                    }
+//                });
+            });
+        });
     </script>
     <title>Dashboard</title>
     <style>
@@ -176,7 +199,7 @@
             <h2>Search Available Tickets</h2>
             <form action="AvailableTickets" method="get">
                 <label for="eventId">Event ID:</label>
-                <input type="number" id="eventId" name="eventId" min="1" required>
+                 <select class="eventDropdown" name="eventId" required></select><br>
                 <input type="submit" value="Search">
             </form>
         </div>
@@ -184,9 +207,16 @@
         <div class="column">
             <h2>Book Tickets</h2>
             <form action="Booking" method="post">
-                <label for="eventId">Event ID:</label>
-                <input type="number" id="eventId" name="eventId" min="1" required>
+                <label for="eventId">Event Select:</label>
+                <select class="eventDropdown" name="eventId" required></select><br>
 
+                <label for="ticketType">Ticket Type:</label><br>
+    <input type="radio" id="vipTicket" name="ticketType" value="VIP" required>
+    <label for="vipTicket">VIP</label><br>
+    
+    <input type="radio" id="generalTicket" name="ticketType" value="General" required>
+    <label for="generalTicket">General</label><br><br>
+    
                 <label for="numberOfTickets">Number of Tickets:</label>
                 <input type="number" id="numberOfTickets" name="numberOfTickets" min="1" required>
 

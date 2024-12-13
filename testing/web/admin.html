@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="js/ajax.js" defer></script>
     <script>
         function fetchAdminData(action, params = {}) {
             $.ajax({
@@ -211,7 +212,9 @@
 </head>
 <body>
     <h1>Admin Dashboard</h1>
-    
+    <button class="button" onclick="initDB()" >Initialize Database</button>
+    <button class="button" onclick="deleteDB()">Delete Database</button>
+    <a href="events.html" target="_blank"><button class="button">Register Event</button></a>
     <!-- Available and Reserved Tickets -->
     <section>
         <h2>Available and Reserved Tickets</h2>
@@ -258,6 +261,17 @@
         <button onclick="fetchAdminData('ticketTypeRevenue', { ticketType: $('#ticketType').val() })">Fetch</button>
         <div id="ticketTypeRevenue"></div>
     </section>
+    
+    <section>
+    <h2>Cancel Event</h2>
+    <form id="cancelEventForm">
+        <label for="eventId">Event ID:</label>
+         <select class="eventDropdown" name="eventId" required></select><br>
+        <button onclick="cancelEvent()">Cancel Event</button>
+    </form>
+    <div id="cancelEventMessage" style="color: red; font-weight: bold;"></div>
+</section>
+
 
 </body>
 </html>

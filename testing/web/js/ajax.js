@@ -1,4 +1,8 @@
 
+$(document).ready(function () {
+        populateEventDropdown("bookingEventDropdown");
+    });
+
 function createTableFromJSON(data) {
     var html = "<table><tr><th>Category</th><th>Value</th></tr>";
     for (const x in data) {
@@ -110,4 +114,54 @@ function deleteDB() {
     xhr.open('GET', 'DeleteDB');
     xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
     xhr.send();
+}
+
+function cancelEvent() {
+        event.preventDefault(); /*to stop the page from refreshing*/
+        const eventId = $("#eventId").val();
+
+        if (!confirm("Are you sure you want to cancel this event? This will refund all customers.")) {
+            return;
+        }
+
+        $.ajax({
+            url: "CancelEvent",
+            method: "POST",
+            data: { eventId: eventId },
+            success: function (data) {
+                if (data.error) {
+                    $("#cancelEventMessage").html(`<p>Error: ${data.error}</p>`);
+                } else {
+                    $("#cancelEventMessage").html(`<p>${data.message}</p>`);
+                    fetchAdminData("availableAndReserved"); // Refresh event data
+                }
+            },
+            error: function (xhr, status, error) {
+                $("#cancelEventMessage").html(`<p>Error: ${xhr.responseText || error}</p>`);
+            }
+        });
+    }
+    
+function populateEventDropdown(selectorId) {
+    $.ajax({
+        url: "Events",
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+            $(".eventDropdown").each(function () {
+                    $(this).empty(); // Clear existing options
+                    $(this).append('<option value="" disabled selected>Select an Event</option>');
+                    
+                    data.forEach(event => {
+                        $(this).append(`<option value="${event.EventID}">${event.EventName}</option>`);
+                    });
+                });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching events:", error);
+                $(".eventDropdown").each(function () {
+                    $(this).html('<option value="" disabled>Error loading events</option>');
+                });
+        }
+    });
 }

@@ -76,73 +76,80 @@ public class RegisterEvent extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         // Get user input from the request
-        String eventName = request.getParameter("eventName");
-        String eventDate = request.getParameter("eventDate");
-        String eventTime = request.getParameter("eventTime");
-        String eventType = request.getParameter("eventType");
-        int capacity = Integer.parseInt(request.getParameter("capacity"));
-        double ticketPrice = 10.00; // Default ticket price
+       String eventName = request.getParameter("eventName");
+    String eventDate = request.getParameter("eventDate");
+    String eventTime = request.getParameter("eventTime");
+    String eventType = request.getParameter("eventType");
 
-        Connection conn = null;
+    int generalCapacity = Integer.parseInt(request.getParameter("generalCapacity"));
+    double generalPrice = Double.parseDouble(request.getParameter("generalPrice"));
+    int vipCapacity = Integer.parseInt(request.getParameter("vipCapacity"));
+    double vipPrice = Double.parseDouble(request.getParameter("vipPrice"));
 
-        try {
-            conn = DB_Connection.getConnection();
-            conn.setAutoCommit(false); // Disable auto-commit for transactional behavior
+    Connection conn = null;
 
-            // Insert event into the Events table
-            String sqlEvent = "INSERT INTO Events (EventName, EventDate, EventTime, EventType, Capacity) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pstmtEvent = conn.prepareStatement(sqlEvent, PreparedStatement.RETURN_GENERATED_KEYS);
-            pstmtEvent.setString(1, eventName);
-            pstmtEvent.setString(2, eventDate);
-            pstmtEvent.setString(3, eventTime);
-            pstmtEvent.setString(4, eventType);
-            pstmtEvent.setInt(5, capacity);
-            pstmtEvent.executeUpdate();
+    try {
+        conn = DB_Connection.getConnection();
+        conn.setAutoCommit(false); // Disable auto-commit
 
-            // Retrieve the generated EventID from Events
-            ResultSet rsEvent = pstmtEvent.getGeneratedKeys();
-            int eventId = 0;
-            if (rsEvent.next()) {
-                eventId = rsEvent.getInt(1); // Get the generated EventID
-            } else {
-                throw new SQLException("Failed to retrieve EventID.");
-            }
-            // Insert tickets for the event using the retrieved EventID
-            String sqlTickets = "INSERT INTO Tickets (EventID, TicketType, Price, Availability) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmtTickets = conn.prepareStatement(sqlTickets);
-            pstmtTickets.setInt(1, eventId); // Use the EventID retrieved
-            pstmtTickets.setString(2, "Simple"); // Default ticket type
-            pstmtTickets.setDouble(3, ticketPrice); // Default price
-            pstmtTickets.setInt(4, capacity); // Initial availability matches capacity
-            pstmtTickets.executeUpdate();
+        // Insert event into the Events table
+        String sqlEvent = "INSERT INTO Events (EventName, EventDate, EventTime, EventType, Capacity) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement pstmtEvent = conn.prepareStatement(sqlEvent, PreparedStatement.RETURN_GENERATED_KEYS);
+        pstmtEvent.setString(1, eventName);
+        pstmtEvent.setString(2, eventDate);
+        pstmtEvent.setString(3, eventTime);
+        pstmtEvent.setString(4, eventType);
+        pstmtEvent.setInt(5, generalCapacity + vipCapacity); // Total capacity
+        pstmtEvent.executeUpdate();
 
-            conn.commit(); // Commit the transaction
+        ResultSet rsEvent = pstmtEvent.getGeneratedKeys();
+        int eventId = 0;
+        if (rsEvent.next()) {
+            eventId = rsEvent.getInt(1);
+        } else {
+            throw new SQLException("Failed to retrieve EventID.");
+        }
 
-            // Send success response
-            response.setContentType("text/html");
-            response.getWriter().println("<h3>Event and Tickets Registered Successfully!</h3>");
-        } catch (Exception e) {
-            // Handle errors
-             e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback(); // Rollback the transaction if any error occurs
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
-            }
-            response.setContentType("text/html");
-            response.getWriter().println("<h3>Error: " + e.getMessage() + "</h3>");
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close(); // Close the connection
-                } catch (SQLException closeEx) {
-                    closeEx.printStackTrace();
-                }
+        // Insert General tickets
+        String sqlTickets = "INSERT INTO Tickets (EventID, TicketType, Price, Availability) VALUES (?, ?, ?, ?)";
+        PreparedStatement pstmtTickets = conn.prepareStatement(sqlTickets);
+        pstmtTickets.setInt(1, eventId);
+        pstmtTickets.setString(2, "General");
+        pstmtTickets.setDouble(3, generalPrice);
+        pstmtTickets.setInt(4, generalCapacity);
+        pstmtTickets.executeUpdate();
+
+        // Insert VIP tickets
+        pstmtTickets.setString(2, "VIP");
+        pstmtTickets.setDouble(3, vipPrice);
+        pstmtTickets.setInt(4, vipCapacity);
+        pstmtTickets.executeUpdate();
+
+        conn.commit(); // Commit the transaction
+
+        // Success response
+        response.setContentType("text/html");
+        response.getWriter().println("<h3>Event and Tickets Registered Successfully!</h3>");
+    } catch (Exception e) {
+        e.printStackTrace();
+        if (conn != null) {
+            try {
+                conn.rollback(); // Rollback on error
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
             }
         }
+        response.setContentType("text/html");
+        response.getWriter().println("<h3>Error: " + e.getMessage() + "</h3>");
+    } finally {
+        if (conn != null) {
+            try {
+                conn.close(); // Close connection
+            } catch (SQLException closeEx) {
+                closeEx.printStackTrace();
+            }
+        }
+    }
     }
 
     /**

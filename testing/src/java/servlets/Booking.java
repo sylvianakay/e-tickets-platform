@@ -88,6 +88,7 @@ public class Booking extends HttpServlet {
         }
         int customerId = (int) session.getAttribute("CustomerID"); 
         int eventId = Integer.parseInt(request.getParameter("eventId"));
+        String ticketType = request.getParameter("ticketType"); 
         int numberOfTickets = Integer.parseInt(request.getParameter("numberOfTickets"));
         java.sql.Date bookingDate = new java.sql.Date(System.currentTimeMillis()); // Current date
 
@@ -100,10 +101,11 @@ public class Booking extends HttpServlet {
             conn.setAutoCommit(false); // Disable auto-commit for transactional behavior
 
             // Step 1: Find a TicketID with enough availability
-            String sqlFindTicket = "SELECT TicketID, Availability FROM Tickets WHERE EventID = ? AND Availability >= ? LIMIT 1";
+            String sqlFindTicket = "SELECT TicketID, Availability, Price FROM Tickets WHERE EventID = ? AND TicketType = ? AND Availability >= ? LIMIT 1";
             PreparedStatement pstmtFind = conn.prepareStatement(sqlFindTicket);
             pstmtFind.setInt(1, eventId);
-            pstmtFind.setInt(2, numberOfTickets);
+        pstmtFind.setString(2, ticketType);
+        pstmtFind.setInt(3, numberOfTickets);
             ResultSet rs = pstmtFind.executeQuery();
 
             if (!rs.next()) {
@@ -114,6 +116,8 @@ public class Booking extends HttpServlet {
 
             int ticketId = rs.getInt("TicketID");
             int currentAvailability = rs.getInt("Availability");
+            double ticketPrice = rs.getDouble("Price");
+        double totalPrice = ticketPrice * numberOfTickets;
 
             // Step 2: Deduct the number of tickets from the ticket's availability
             String sqlUpdateAvailability = "UPDATE Tickets SET Availability = ? WHERE TicketID = ?";
@@ -134,9 +138,12 @@ public class Booking extends HttpServlet {
 
             conn.commit(); // Commit transaction
 
+            response.setContentType("text/plain"); // Plain text response
+response.getWriter().println("Tickets booked successfully! Total Price: $" + totalPrice);
+
             // Success response
-            response.setContentType("text/html");
-            response.getWriter().println("<h3>Tickets booked successfully!</h3>");
+//            response.setContentType("text/html");
+//            response.getWriter().println("<h3>Tickets booked successfully!</h3>");
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) {
