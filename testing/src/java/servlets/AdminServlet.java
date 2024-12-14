@@ -52,10 +52,10 @@ public class AdminServlet extends HttpServlet {
    private void handleAvailableAndReserved(Connection conn, PrintWriter out) {
     String sql = "SELECT e.EventName, " +
                  "SUM(t.Availability) AS Available, " +
-                 "SUM(t.InitialAvailability - t.Availability) AS Reserved " +
+                 "(e.Capacity - SUM(t.Availability)) AS Reserved " +
                  "FROM Events e " +
                  "JOIN Tickets t ON e.EventID = t.EventID " +
-                 "GROUP BY e.EventName";
+                 "GROUP BY e.EventName, e.Capacity";
     try (PreparedStatement pstmt = conn.prepareStatement(sql);
          ResultSet rs = pstmt.executeQuery()) {
         StringBuilder json = new StringBuilder("[");
@@ -141,8 +141,8 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void handleBookingsByPeriod(Connection conn, HttpServletRequest request, PrintWriter out) throws SQLException {
-        String startDate = request.getParameter("startDate");
-        String endDate = request.getParameter("endDate");
+        String startDate = request.getParameter("bookingStartDate");
+        String endDate = request.getParameter("bookingEndDate");
 
         String sql = "SELECT b.BookingID, e.EventName, b.NumberOfTickets, b.BookingDate " +
                      "FROM Bookings b " +
@@ -161,6 +161,9 @@ public class AdminServlet extends HttpServlet {
                         .append("\"NumberOfTickets\":").append(rs.getInt("NumberOfTickets")).append(",")
                         .append("\"BookingDate\":\"").append(rs.getDate("BookingDate")).append("\"")
                         .append("}");
+                }
+                if (json.length() == 1) { // No data found
+                json.append("{\"message\":\"No bookings found in the specified date range.\"}");
                 }
                 json.append("]");
                 out.println(json.toString());

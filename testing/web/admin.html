@@ -8,6 +8,8 @@
     <script src="js/ajax.js" defer></script>
     <script>
         function fetchAdminData(action, params = {}) {
+            const startDate = $('#bookingStartDate').val();
+            const endDate = $('#bookingEndDate').val();
             $.ajax({
                 url: "AdminServlet",
                 method: "GET",

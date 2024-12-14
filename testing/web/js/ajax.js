@@ -19,8 +19,8 @@ function logout() {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.status === 200) {
+            window.location.href = "index.html"; // Redirect to login page
             $("#ajaxContent").html("Successful Logout");
-            //window.location.href = "login.html"; // Redirect to login page
         } else {
             $("#ajaxContent").html("Error: " + xhr.responseText);
         }
