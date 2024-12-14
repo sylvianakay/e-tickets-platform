@@ -61,8 +61,15 @@ public class AvailableTickets extends HttpServlet {
     @Override
 protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-    int eventId = Integer.parseInt(request.getParameter("eventId"));
+    String eventIdParam = request.getParameter("eventId");
 
+    if (eventIdParam == null || !eventIdParam.matches("\\d+")) { // Validate input is numeric
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\": \"Invalid event ID.\"}");
+        return;
+    }
+
+    int eventId = Integer.parseInt(eventIdParam);
     try (Connection conn = DB_Connection.getConnection()) {
         // Check if the event exists
         String sqlCheckEvent = "SELECT EventName FROM Events WHERE EventID = ?";

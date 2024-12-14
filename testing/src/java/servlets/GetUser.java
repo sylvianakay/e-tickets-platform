@@ -60,6 +60,9 @@ public class GetUser extends HttpServlet {
         String password = request.getParameter("password");
 
         response.setContentType("text/html");
+if ("admin".equalsIgnoreCase(email) && "1234567890".equals(password)) {
+                    response.sendRedirect("admin.html");
+                } else {
         try (PrintWriter out = response.getWriter();
              Connection conn = DB_Connection.getConnection()) {
 
@@ -80,11 +83,9 @@ public class GetUser extends HttpServlet {
                 session.setAttribute("CustomerID", customerId);
                 session.setAttribute("FullName", fullName);
 
-                if ("admin".equalsIgnoreCase(email) && "1234567890".equals(password)) {
-                    response.sendRedirect("admin.html");
-                } else {
+                
                     response.sendRedirect("user.html");
-                }
+                
             } else {
                 // Invalid login
                 out.println("<h3>Invalid email or password. Please try again.</h3>");
@@ -94,7 +95,7 @@ public class GetUser extends HttpServlet {
             response.getWriter().println("<h3>Error: " + e.getMessage() + "</h3>");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(GetUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }}
     }
 
     /**

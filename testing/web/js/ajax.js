@@ -158,7 +158,7 @@ function populateEventDropdown(selectorId) {
                 $(this).append('<option value="" disabled selected>Select an Event</option>');
                 
                 data.forEach(event => {
-                    $(this).append(`<option value="${event.EventName}">${event.EventName}</option>`);
+                    $(this).append(`<option value="${event.EventID}">${event.EventName}</option>`);
                 });
             });
         },
