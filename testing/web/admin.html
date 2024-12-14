@@ -16,6 +16,7 @@
                 data: { action, ...params },
                 dataType: "json",
                 success: function (data) {
+                    console.log("Data received for action:", action, data);
                     // Display data based on the action
                     if (action === "availableAndReserved") {
                         displayAvailableAndReserved(data);
@@ -60,16 +61,31 @@
         }
 
         function displayHighestRevenueEvent(data) {
-            $("#highestRevenueEvent").html(`<p>The event with the highest revenue is: ${data.EventName} with $${data.TotalRevenue} revenue.</p>`);
+            if (data.message) {
+                $("#highestRevenueEvent").html(`<p>${data.message}</p>`);
+            } else {
+                $("#highestRevenueEvent").html(
+                    `<p>The event with the highest revenue is: ${data.EventName} with ${data.TotalRevenue} revenue.</p>`
+                );
+            }
         }
 
         function displayBookingsByPeriod(data) {
-            let table = `<table><tr><th>Booking ID</th><th>Event Name</th><th>Number of Tickets</th><th>Booking Date</th></tr>`;
-            data.forEach(booking => {
-                table += `<tr><td>${booking.BookingID}</td><td>${booking.EventName}</td><td>${booking.NumberOfTickets}</td><td>${booking.BookingDate}</td></tr>`;
-            });
-            table += "</table>";
-            $("#bookingsByPeriod").html(table);
+            if (data.message) {
+                $("#bookingsByPeriod").html(`<p>${data.message}</p>`);
+            } else {
+                let table = `<table><tr><th>Booking ID</th><th>Event Name</th><th>Number of Tickets</th><th>Booking Date</th></tr>`;
+                data.forEach(booking => {
+                    table += `<tr>
+                                <td>${booking.BookingID}</td>
+                                <td>${booking.EventName}</td>
+                                <td>${booking.NumberOfTickets}</td>
+                                <td>${booking.BookingDate}</td>
+                              </tr>`;
+                });
+                table += "</table>";
+                $("#bookingsByPeriod").html(table);
+            }
         }
 
         function displayTicketTypeRevenue(data) {

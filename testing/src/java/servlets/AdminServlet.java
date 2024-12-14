@@ -127,30 +127,34 @@ public class AdminServlet extends HttpServlet {
                      "WHERE b.BookingDate BETWEEN ? AND ? " +
                      "GROUP BY e.EventName " +
                      "ORDER BY TotalRevenue DESC LIMIT 1";
+
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, startDate);
             pstmt.setString(2, endDate);
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    out.println("{\"EventName\":\"" + rs.getString("EventName") + "\",\"TotalRevenue\":" + rs.getDouble("TotalRevenue") + "}");
+                    out.println("{\"EventName\":\"" + rs.getString("EventName") + "\", \"TotalRevenue\":" + rs.getDouble("TotalRevenue") + "}");
                 } else {
-                    out.println("{\"error\":\"No data available.\"}");
+                    out.println("{\"message\":\"No data available for the selected period.\"}");
                 }
             }
         }
     }
 
     private void handleBookingsByPeriod(Connection conn, HttpServletRequest request, PrintWriter out) throws SQLException {
-        String startDate = request.getParameter("bookingStartDate");
-        String endDate = request.getParameter("bookingEndDate");
+       String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
 
         String sql = "SELECT b.BookingID, e.EventName, b.NumberOfTickets, b.BookingDate " +
                      "FROM Bookings b " +
                      "JOIN Events e ON b.EventID = e.EventID " +
                      "WHERE b.BookingDate BETWEEN ? AND ?";
+
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, startDate);
             pstmt.setString(2, endDate);
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 StringBuilder json = new StringBuilder("[");
                 while (rs.next()) {
@@ -162,8 +166,8 @@ public class AdminServlet extends HttpServlet {
                         .append("\"BookingDate\":\"").append(rs.getDate("BookingDate")).append("\"")
                         .append("}");
                 }
-                if (json.length() == 1) { // No data found
-                json.append("{\"message\":\"No bookings found in the specified date range.\"}");
+                if (json.length() == 1) { 
+                    json.append("{\"message\":\"No bookings found in the specified period.\"}");
                 }
                 json.append("]");
                 out.println(json.toString());
