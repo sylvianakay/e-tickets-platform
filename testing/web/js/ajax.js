@@ -90,14 +90,14 @@ function initDB() {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-              $("#ajaxContent").html("Successful Initialization");
+            document.getElementById("dbMessage").innerText = "Database initialized successfully.";
         } else if (xhr.status !== 200) {
-             $("#ajaxContent").html("Error Occured while initDB(): "+ xhr.status);
+            document.getElementById("dbMessage").innerText = "Error occurred while initializing database: " + xhr.status;
         }
     };
 
     xhr.open('GET', 'InitDB');
-    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send();
 }
 
@@ -105,14 +105,14 @@ function deleteDB() {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-              $("#ajaxContent").html("Successful Deletion");
+            document.getElementById("dbMessage").innerText = "Database deleted successfully.";
         } else if (xhr.status !== 200) {
-             $("#ajaxContent").html("Error Occured while deleteDB(): "+ xhr.status );
+            document.getElementById("dbMessage").innerText = "Error occurred while deleting database: " + xhr.status;
         }
     };
 
     xhr.open('GET', 'DeleteDB');
-    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send();
 }
 
@@ -169,4 +169,33 @@ function populateEventDropdown(selectorId) {
             });
         }
     });
+    
+     document.querySelector('RegisterEventForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(event.target);
+
+        // Use fetch to send the form data to the servlet
+        fetch('RegisterEvent', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json()) // Parse JSON response
+        .then(data => {
+            const messageDiv = document.getElementById('responseMessage');
+            if (data.success) {
+                messageDiv.style.color = 'green';
+                messageDiv.textContent = data.message; // Display success message
+            } else {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = data.message; // Display error message
+            }
+        })
+        .catch(error => {
+            const messageDiv = document.getElementById('responseMessage');
+            messageDiv.style.color = 'red';
+            messageDiv.textContent = 'Error: ' + error.message; // Handle network errors
+        });
+    });
+    
 }
