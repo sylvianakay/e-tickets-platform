@@ -82,11 +82,19 @@ public class InitDatabase {
                 + "FOREIGN KEY (EventID) REFERENCES Events(EventID),"
                 + "FOREIGN KEY (TicketID) REFERENCES Tickets(TicketID))");
 
+            
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Seats ("
+                + "SeatID INT AUTO_INCREMENT PRIMARY KEY,"
+                + "EventID INT NOT NULL,"
+                + "TicketType VARCHAR(255) NOT NULL,"
+                + "SeatNumber VARCHAR(10) NOT NULL,"
+                + "FOREIGN KEY (EventID) REFERENCES Events(EventID),"
+                + "UNIQUE (EventID, SeatNumber))");
+            
+            
             System.out.println("Tables created successfully.");
             
-            String insertAdmin = "INSERT INTO Customers (FullName, Email, CreditCardInfo, Password) " +
-                     "VALUES ('admin', 'admin', '0000000000000000', '1234567890')";
-            stmt.executeUpdate(insertAdmin);
+            
         }
     
     }
