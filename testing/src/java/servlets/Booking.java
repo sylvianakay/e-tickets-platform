@@ -52,8 +52,6 @@ public class Booking extends HttpServlet {
             out.println("</html>");
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -98,9 +96,8 @@ public class Booking extends HttpServlet {
         try {
             
             conn = DB_Connection.getConnection();
-            conn.setAutoCommit(false); // Disable auto-commit for transactional behavior
+            conn.setAutoCommit(false);
 
-            // Step 1: Find a TicketID with enough availability
             String sqlFindTicket = "SELECT TicketID, Availability, Price FROM Tickets WHERE EventID = ? AND TicketType = ? AND Availability >= ? LIMIT 1";
             PreparedStatement pstmtFind = conn.prepareStatement(sqlFindTicket);
             pstmtFind.setInt(1, eventId);
@@ -111,22 +108,19 @@ public class Booking extends HttpServlet {
             if (!rs.next()) {
                 throw new SQLException("No available tickets found for the specified EventID and requested quantity.");
             }
-//            double ticketPrice = rs.getDouble("Price");
-//            double totalPrice = ticketPrice * numberOfTickets;
+
 
             int ticketId = rs.getInt("TicketID");
             int currentAvailability = rs.getInt("Availability");
             double ticketPrice = rs.getDouble("Price");
         double totalPrice = ticketPrice * numberOfTickets;
 
-            // Step 2: Deduct the number of tickets from the ticket's availability
             String sqlUpdateAvailability = "UPDATE Tickets SET Availability = ? WHERE TicketID = ?";
             PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdateAvailability);
             pstmtUpdate.setInt(1, currentAvailability - numberOfTickets);
             pstmtUpdate.setInt(2, ticketId);
             pstmtUpdate.executeUpdate();
 
-            // Step 3: Insert the booking into the Bookings table
             String sqlInsertBooking = "INSERT INTO Bookings (CustomerID, EventID, TicketID, BookingDate, NumberOfTickets) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pstmtBooking = conn.prepareStatement(sqlInsertBooking);
             pstmtBooking.setInt(1, customerId);
@@ -141,9 +135,6 @@ public class Booking extends HttpServlet {
             response.setContentType("text/plain"); // Plain text response
 response.getWriter().println("Tickets booked successfully! Total Price: $" + totalPrice);
 
-            // Success response
-//            response.setContentType("text/html");
-//            response.getWriter().println("<h3>Tickets booked successfully!</h3>");
         } catch (Exception e) {
             e.printStackTrace();
             if (conn != null) {

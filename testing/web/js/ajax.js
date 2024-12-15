@@ -47,43 +47,43 @@ function getUser() {
 }
 
 
-
-$("#edit-user-form").on("submit", function (event) {
-     event.preventDefault(); // Prevent form submission
-
-        const formData = {};
-        $(this).serializeArray().forEach((field) => {
-            formData[field.name] = field.value;
-        });
-
-        $.ajax({
-            url: '/EditUser', // Adjust to your servlet path
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
-            success: function (response) {
-                $('#edit-message').text('User details updated successfully.').css('color', 'green');
-            },
-            error: function (xhr) {
-                $('#edit-message').text('Error updating user: ' + xhr.responseText).css('color', 'red');
-            }
-        });
-    });
+//
+//$("#edit-user-form").on("submit", function (event) {
+//     event.preventDefault(); // Prevent form submission
+//
+//        const formData = {};
+//        $(this).serializeArray().forEach((field) => {
+//            formData[field.name] = field.value;
+//        });
+//
+//        $.ajax({
+//            url: '/EditUser', // Adjust to your servlet path
+//            type: 'POST',
+//            contentType: 'application/json',
+//            data: JSON.stringify(formData),
+//            success: function (response) {
+//                $('#edit-message').text('User details updated successfully.').css('color', 'green');
+//            },
+//            error: function (xhr) {
+//                $('#edit-message').text('Error updating user: ' + xhr.responseText).css('color', 'red');
+//            }
+//        });
+//    });
  
 
 
-function createUser(){
-    var xhr = new XMLHttpRequest();
-    xhr.onload =  XMLHttpRequest();
-    xhr.onload = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            $("#ajaxContent").html(createTableFromJSON(JSON.parse(xhr.responseText)));
-          //  $("#ajaxContent").html("Successful Login");
-        } else if (xhr.status !== 200) {
-             $("#ajaxContent").html("User not exists or incorrect password");
-        }
-    };
-}
+//function createUser(){
+//    var xhr = new XMLHttpRequest();
+//    xhr.onload =  XMLHttpRequest();
+//    xhr.onload = function () {
+//        if (xhr.readyState === 4 && xhr.status === 200) {
+//            $("#ajaxContent").html(createTableFromJSON(JSON.parse(xhr.responseText)));
+//            $("#ajaxContent").html("Successful Login");
+//        } else if (xhr.status !== 200) {
+//             $("#ajaxContent").html("User not exists or incorrect password");
+//        }
+//    };
+//}
 
 
 function initDB() {
@@ -133,6 +133,7 @@ function cancelEvent() {
         method: "POST",
         data: { eventName: selectedEventName },
         success: function (data) {
+            location.reload();
             if (data.error) {
                 $("#cancelEventMessage").text(data.error);
             } else {

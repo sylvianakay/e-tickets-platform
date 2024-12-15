@@ -37,7 +37,7 @@ public class RegisterEvent extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+           
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -110,7 +110,6 @@ public class RegisterEvent extends HttpServlet {
             throw new SQLException("Failed to retrieve EventID.");
         }
 
-        // Insert General tickets
         String sqlTickets = "INSERT INTO Tickets (EventID, TicketType, Price, Availability) VALUES (?, ?, ?, ?)";
         PreparedStatement pstmtTickets = conn.prepareStatement(sqlTickets);
         pstmtTickets.setInt(1, eventId);
@@ -118,8 +117,7 @@ public class RegisterEvent extends HttpServlet {
         pstmtTickets.setDouble(3, generalPrice);
         pstmtTickets.setInt(4, generalCapacity);
         pstmtTickets.executeUpdate();
-
-        // Insert VIP tickets
+        
         pstmtTickets.setString(2, "VIP");
         pstmtTickets.setDouble(3, vipPrice);
         pstmtTickets.setInt(4, vipCapacity);
@@ -128,8 +126,9 @@ public class RegisterEvent extends HttpServlet {
         conn.commit(); // Commit the transaction
 
         // Success response
-        response.setContentType("text/html");
-        response.getWriter().println("<h3>Event and Tickets Registered Successfully!</h3>");
+//        response.setContentType("text/html");
+//        response.getWriter().println("<h3>Event and Tickets Registered Successfully!</h3>");
+        response.sendRedirect("admin.html");
     } catch (Exception e) {
         e.printStackTrace();
         if (conn != null) {

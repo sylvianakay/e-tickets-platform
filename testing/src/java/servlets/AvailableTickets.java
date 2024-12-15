@@ -86,13 +86,13 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
 
         String eventName = rsEvent.getString("EventName");
 
-        // Query available tickets
+       
         String sql = "SELECT TicketID, TicketType, Price, Availability FROM Tickets WHERE EventID = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, eventId);
         ResultSet rs = pstmt.executeQuery();
 
-        // Build HTML response
+        
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         out.println("<html><head><title>Available Tickets</title>");

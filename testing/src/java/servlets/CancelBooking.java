@@ -87,13 +87,10 @@ public class CancelBooking extends HttpServlet {
             conn = DB_Connection.getConnection();
             conn.setAutoCommit(false); // Start transaction
 
-            // Step 1: Delete the booking
             String deleteBookingSql = "DELETE FROM Bookings WHERE BookingID = ?";
             PreparedStatement pstmtDelete = conn.prepareStatement(deleteBookingSql);
             pstmtDelete.setInt(1, bookingId);
             pstmtDelete.executeUpdate();
-
-            // Step 2: Update ticket availability
             String updateAvailabilitySql = "UPDATE Tickets SET Availability = Availability + ? WHERE TicketID = ?";
             PreparedStatement pstmtUpdate = conn.prepareStatement(updateAvailabilitySql);
             pstmtUpdate.setInt(1, numberOfTickets);
@@ -104,16 +101,11 @@ public class CancelBooking extends HttpServlet {
 
             // Success response
             response.setContentType("application/json");
-            response.getWriter().println("{\"message\":\"Booking cancelled successfully.\"}");
+            response.getWriter().println("{\"message\":\"Booking canceled successfully.\"}");
+
+           
         } catch (Exception e) {
             e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback(); // Rollback on error
-                } catch (SQLException ex) {
-                    Logger.getLogger(CancelBooking.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
             response.setContentType("application/json");
             response.getWriter().println("{\"error\":\"" + e.getMessage() + "\"}");
         } finally {

@@ -64,36 +64,7 @@ public class RegisterUser extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-    }
-
-//    /**
-//     * Handles the HTTP <code>POST</code> method.
-//     *
-//     * @param request servlet request
-//     * @param response servlet response
-//     * @throws ServletException if a servlet-specific error occurs
-//     * @throws IOException if an I/O error occurs
-//     */
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        processRequest(request, response);
-//    }
-//
-//    /**
-//     * Returns a short description of the servlet.
-//     *
-//     * @return a String containing servlet description
-//     */
-//    @Override
-//    public String getServletInfo() {
-//        return "Short description";
-//    }// </editor-fold>
-//
-//}
-
-
-    
+    }   
     
     @Override 
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -111,84 +82,10 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             pstmt.setString(4, Password);
             pstmt.executeUpdate();
 
-            response.getWriter().println("Customer added successfully!");
+            response.sendRedirect("index.html");
         } catch (Exception e) {
-            e.printStackTrace();
             response.getWriter().println("Error: " + e.getMessage());
         }
     }
 
-
-private String extractValue(String json, String fieldName) {
-    String[] fields = json.replace("{", "").replace("}", "").replace("\"", "").split(",");
-    for (String field : fields) {
-        String[] keyValue = field.split(":");
-        if (keyValue[0].trim().equals(fieldName)) {
-            return keyValue[1].trim();
-        }
-    }
-    throw new IllegalArgumentException("Field " + fieldName + " not found in JSON.");
-}
-
-    /**
-     * Manually parses a JSON string into a User object.
-     *
-     * @param jsonData The JSON string to parse.
-     * @return A User object populated with data from the JSON.
-     * @throws IllegalArgumentException If required fields are missing or invalid.
-     */
-//    private User parseJsonToUser(String jsonData) {
-//        User user = new User();
-//
-//        try {
-//            // Extract fields manually
-//            String[] fields = jsonData.replace("{", "").replace("}", "").replace("\"", "").split(",");
-//
-//            for (String field : fields) {
-//                String[] keyValue = field.split(":");
-//                String key = keyValue[0].trim();
-//                String value = keyValue[1].trim();
-//
-//                switch (key) {
-//                    case "username":
-//                        user.setUsername(value);
-//                        break;
-//                    case "email":
-//                        user.setEmail(value);
-//                        break;
-//                    case "password":
-//                        user.setPassword(value);
-//                        break;
-//                    case "firstname":
-//                        user.setFirstname(value);
-//                        break;
-//                    case "lastname":
-//                        user.setLastname(value);
-//                        break;
-//                    case "card":
-//                        user.setCard(value);
-//                        break;
-//                    default:
-//                        //throw new IllegalArgumentException("Unknown field: " + key);
-//                }
-//            }
-//        } catch (Exception e) {
-//            throw new IllegalArgumentException("Error parsing JSON: " + e.getMessage());
-//        }
-//
-//        return user;
-//    }
-
-    /**
-     * Checks if a specific field is available (not already in use).
-     *
-     * @param field       The field to check (e.g., "username", "email", "telephone").
-     * @param value       The value of the field.
-     * @param editUsers   Instance of EditUsersTable to perform the database query.
-     * @return True if the field is available, false otherwise.
-     */
-//    private boolean isFieldAvailable(String field, String value, EditUsersTable editUsers) {
-//        String query = String.format("SELECT COUNT(*) FROM users WHERE %s = '%s'", field, value); // Treat as not available in case of an error
-//        return editUsers.isFieldAvailable(query);
-//    }
 }
